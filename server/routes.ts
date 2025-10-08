@@ -106,6 +106,36 @@ declare module 'express-serve-static-core' {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint for Railway
+  app.get("/health", (req: Request, res: Response) => {
+    res.status(200).json({ 
+      status: "ok", 
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime() 
+    });
+  });
+
+  // Database health check endpoint
+  app.get("/health/db", async (req: Request, res: Response) => {
+    try {
+      // Simple query to test database connection
+      const users = await storage.getAllUsers();
+      res.status(200).json({ 
+        status: "ok", 
+        database: "connected",
+        users_count: users.length,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        status: "error", 
+        database: "disconnected",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   // PayPal routes - reference: blueprint:javascript_paypal
   app.get("/paypal/setup", async (req, res) => {
     await loadPaypalDefault(req, res);

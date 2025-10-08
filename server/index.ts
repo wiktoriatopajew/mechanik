@@ -12,6 +12,13 @@ import fs from "fs";
 
 const app = express();
 
+// Ensure uploads directory exists
+const uploadsDir = process.env.UPLOAD_DIR || 'uploads';
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log(`Created uploads directory: ${uploadsDir}`);
+}
+
 // Initialize admin user after environment variables are loaded
 storage.initAdminUser();
 
