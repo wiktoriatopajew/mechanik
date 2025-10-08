@@ -10,3 +10,4 @@ vite.config.ts.*
 uploads/*
 !uploads/.gitkeep
 migrations/.gitkeep
+.local/
